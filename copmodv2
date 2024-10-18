@@ -1,4 +1,3 @@
--- Código principal do Mod Menu
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
@@ -8,6 +7,7 @@ menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
+menuFrame.BorderRadius = UDim.new(0, 10) -- Bordas arredondadas
 
 -- Título do menu
 local titleLabel = Instance.new("TextLabel", menuFrame)
@@ -33,7 +33,7 @@ local buttons = {}
 
 local function minimizeMenu()
     isMinimized = true
-    menuFrame.Size = UDim2.new(0, 50, 0, 50)
+    menuFrame:TweenSize(UDim2.new(0, 50, 0, 50), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
     menuFrame.Position = UDim2.new(1, -50, 0, 0)
 
     for _, button in pairs(buttons) do
@@ -43,7 +43,7 @@ end
 
 local function expandMenu()
     isMinimized = false
-    menuFrame.Size = UDim2.new(0, 300, 0, 400)
+    menuFrame:TweenSize(UDim2.new(0, 300, 0, 400), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
     menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 
     for _, button in pairs(buttons) do
@@ -59,6 +59,36 @@ minimizeButton.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Função para arrastar
+local dragging
+local dragStart
+local startPos
+
+local function updatePosition(input)
+    local delta = input.Position - dragStart
+    menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+menuFrame.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not isMinimized then
+        dragging = true
+        dragStart = input.Position
+        startPos = menuFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        updatePosition(input)
+    end
+end)
+
 -- Função para criar botões no menu
 local function createButton(name, position, activateCallback, deactivateCallback)
     local button = Instance.new("TextButton", menuFrame)
@@ -70,6 +100,7 @@ local function createButton(name, position, activateCallback, deactivateCallback
     button.BorderSizePixel = 0
     button.Font = Enum.Font.SourceSans
     button.TextSize = 20
+    button.BorderRadius = UDim.new(0, 5) -- Bordas arredondadas nos botões
 
     local isActive = false
 
@@ -77,11 +108,11 @@ local function createButton(name, position, activateCallback, deactivateCallback
         isActive = not isActive
         if isActive then
             button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
-            activateCallback() -- Ativar função
+            activateCallback() -- Chama a lógica para ativar a função
         else
             button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
             if deactivateCallback then
-                deactivateCallback() -- Desativar função
+                deactivateCallback() -- Chama a lógica para desativar a função
             end
         end
     end)
@@ -90,86 +121,23 @@ local function createButton(name, position, activateCallback, deactivateCallback
     table.insert(buttons, button)
 end
 
--- Função de voo
-local function flyLogic()
-    -- Obter o jogador e seu personagem
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
-    local camera = game.Workspace.CurrentCamera
-    local primaryPart = character.PrimaryPart
+-- Exemplo de botões
+createButton("Fly", UDim2.new(0, 10, 0, 60), function()
+    -- Lógica para ativar voar
+end, function()
+    -- Lógica para desativar voar
+end)
 
-    -- Variável para controlar o voo
-    local flying = false
-
-    -- Criar e configurar BodyVelocity e BodyGyro
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
-    bodyVelocity.Velocity = Vector3.new()
-    bodyVelocity.P = 10000
-    bodyVelocity.Parent = primaryPart
-
-    local bodyGyro = Instance.new("BodyGyro")
-    bodyGyro.MaxTorque = Vector3.new(4000, 4000, 4000)
-    bodyGyro.CFrame = primaryPart.CFrame
-    bodyGyro.P = 3000
-    bodyGyro.Parent = primaryPart
-
-    -- Função para aplicar movimento
-    local function applyMovement()
-        bodyVelocity.Velocity = camera.CFrame.LookVector * 100 -- Ajuste a velocidade conforme necessário
-        bodyGyro.CFrame = CFrame.new(primaryPart.Position, primaryPart.Position + camera.CFrame.LookVector)
-    end
-
-    -- Função para iniciar o voo
-    local function startFlying()
-        flying = true
-        while flying and humanoid:GetState() ~= Enum.HumanoidStateType.Seated do
-            applyMovement()
-            wait(0.1) -- Ajuste o intervalo conforme necessário
-        end
-    end
-
-    -- Função para parar o voo
-    local function stopFlying()
-        flying = false
-        bodyVelocity.Velocity = Vector3.new() -- Parar movimento
-        bodyGyro.CFrame = primaryPart.CFrame -- Resetar rotação
-    end
-
-    return startFlying, stopFlying
-end
-
--- Função para teleporte ao clicar
-local function teleportOnClick()
-    local mouse = player:GetMouse()
-
-    -- Função que teleporta o jogador para a posição clicada
-    local function teleportTo(position)
-        local character = player.Character or player.CharacterAdded:Wait()
-        local primaryPart = character.PrimaryPart
-
-        primaryPart.CFrame = CFrame.new(position) + Vector3.new(0, 3, 0) -- Teleporta o personagem 3 unidades acima para evitar colisão com o chão
-    end
-
-    -- Espera por clique do mouse
-    mouse.Button1Down:Connect(function()
-        local targetPosition = mouse.Hit.p -- Obtém a posição 3D do ponto clicado
-        teleportTo(targetPosition)
-    end)
-end
-
--- Adicionar botão de voo
-local startFly, stopFly = flyLogic()
-createButton("Fly", UDim2.new(0, 10, 0, 60), startFly, stopFly)
-
--- Botão de teleporte
-createButton("Teleport", UDim2.new(0, 10, 0, 120), teleportOnClick, nil)
-
--- Outros botões do menu
-createButton("Speed Boost", UDim2.new(0, 10, 0, 180), function()
+createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
     -- Lógica para aumentar a velocidade
 end, function()
     -- Lógica para desativar o aumento de velocidade
+end)
+
+createButton("Teleport", UDim2.new(0, 10, 0, 180), function()
+    -- Lógica para teleportar
+end, function()
+    -- Lógica para desativar o teleport
 end)
 
 createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
@@ -188,4 +156,4 @@ createButton("Reset", UDim2.new(0, 10, 0, 360), function()
     -- Lógica para resetar status
 end, function()
     -- Lógica para desativar o reset
-end) 
+end)
