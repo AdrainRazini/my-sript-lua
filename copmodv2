@@ -7,7 +7,6 @@ menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
-menuFrame.Visible = false -- Começa invisível
 
 -- Título do menu
 local titleLabel = Instance.new("TextLabel", menuFrame)
@@ -30,6 +29,7 @@ minimizeButton.TextSize = 20
 
 local isMinimized = false
 local buttons = {}
+local activeScripts = {}  -- Tabela para rastrear scripts ativos
 
 local function minimizeMenu()
     isMinimized = true
@@ -90,7 +90,7 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
 end)
 
 -- Função para criar botões no menu
-local function createButton(name, position, activateCallback, deactivateCallback)
+local function createButton(name, position, activateCallback, deactivateCallback, scriptUrl)
     local button = Instance.new("TextButton", menuFrame)
     button.Size = UDim2.new(1, -20, 0, 50)
     button.Position = position
@@ -107,11 +107,22 @@ local function createButton(name, position, activateCallback, deactivateCallback
         isActive = not isActive
         if isActive then
             button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
+            if scriptUrl then
+                local script = loadstring(game:HttpGet(scriptUrl))() -- Carrega o script
+                activeScripts[scriptUrl] = script -- Adiciona à tabela de scripts ativos
+            end
             activateCallback() -- Chama a lógica para ativar a função
         else
             button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
             if deactivateCallback then
                 deactivateCallback() -- Chama a lógica para desativar a função
+            end
+            if scriptUrl then
+                -- Remove o script ativo se houver
+                if activeScripts[scriptUrl] then
+                    activeScripts[scriptUrl]:Destroy() -- Destroi o script
+                    activeScripts[scriptUrl] = nil -- Remove da tabela
+                end
             end
         end
     end)
@@ -120,49 +131,18 @@ local function createButton(name, position, activateCallback, deactivateCallback
     table.insert(buttons, button)
 end
 
--- Exemplo de botões
-createButton("Fly", UDim2.new(0, 10, 0, 60), function()
-    print("Fly ativado") -- Lógica para voar
+-- Exemplo de botões com links
+createButton("Teleport Script", UDim2.new(0, 10, 0, 60), function()
+    print("Teleport script ativado")
 end, function()
-    print("Fly desativado") -- Lógica para desativar a função de voar
-end)
+    print("Teleport script desativado")
+end, "https://raw.githubusercontent.com/AdrainRazini/my-script-lua/refs/heads/main/teleport-tool")
 
-createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
-    print("Aumento de velocidade ativado") -- Lógica para aumentar a velocidade
+createButton("Speed Script", UDim2.new(0, 10, 0, 120), function()
+    print("Speed script ativado")
 end, function()
-    print("Aumento de velocidade desativado") -- Lógica para desativar o aumento de velocidade
-end)
+    print("Speed script desativado")
+end, "https://raw.githubusercontent.com/AdrainRazini/my-script-lua/refs/heads/main/speed-tool")
 
-createButton("Teleport", UDim2.new(0, 10, 0, 180), function()
-    print("Teleportar ativado") -- Lógica para teleportar
-end, function()
-    print("Teleportar desativado") -- Lógica para desativar o teleport
-end)
+-- Adicione mais botões conforme necessário
 
-createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
-    print("Invencível ativado") -- Lógica para invencibilidade
-end, function()
-    print("Invencível desativado") -- Lógica para desativar a invencibilidade
-end)
-
-createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
-    print("Pulo alto ativado") -- Lógica para pulo alto
-end, function()
-    print("Pulo alto desativado") -- Lógica para desativar o pulo alto
-end)
-
-createButton("Reset", UDim2.new(0, 10, 0, 360), function()
-    print("Reset ativado") -- Lógica para resetar status
-end, function()
-    print("Reset desativado") -- Lógica para desativar o reset
-end)
-
--- Função para mostrar o menu
-local function showMenu()
-    menuFrame.Visible = true
-    menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200) -- Posição inicial do deslizar
-    menuFrame:TweenPosition(UDim2.new(0.5, -150, 0.5, -200), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true) -- Deslizar para a posição desejada
-end
-
--- Chamar a função para mostrar o menu quando o jogo começar
-showMenu()
