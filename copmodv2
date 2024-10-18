@@ -119,39 +119,66 @@ local function createButton(name, position, activateCallback, deactivateCallback
     table.insert(buttons, button)
 end
 
--- Exemplo de botões
+-- Fly (Ativa voo)
 createButton("Fly", UDim2.new(0, 10, 0, 60), function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/2679af32bcce184d58765cff7f406c04a6241994/Flying"))()
+    -- Ativar voo (exemplo de lógica para voar)
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    humanoid.PlatformStand = true
 end, function()
-    -- Lógica para desativar a função de voar, se necessário
+    -- Desativar voo
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    humanoid.PlatformStand = false
 end)
 
+-- Speed Boost (Aumento de Velocidade)
 createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
-    -- Lógica para aumentar a velocidade
+    -- Aumentar a velocidade
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.WalkSpeed = 50 -- Define velocidade para 50
 end, function()
-    -- Lógica para desativar o aumento de velocidade
+    -- Retornar velocidade ao normal
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.WalkSpeed = 16 -- Velocidade padrão do Roblox
 end)
 
+-- Teleport (Teleporte)
 createButton("Teleport", UDim2.new(0, 10, 0, 180), function()
-    -- Lógica para teleportar
-end, function()
-    -- Lógica para desativar o teleport
+    -- Teleporta o jogador para uma posição aleatória no mapa
+    local randomPosition = Vector3.new(math.random(-500, 500), 50, math.random(-500, 500))
+    player.Character:SetPrimaryPartCFrame(CFrame.new(randomPosition))
 end)
 
+-- Invincible (Invencível)
 createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
-    -- Lógica para invencibilidade
+    -- Tornar jogador invencível
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.Health = math.huge -- Saúde infinita
 end, function()
-    -- Lógica para desativar a invencibilidade
+    -- Remover invencibilidade
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.Health = humanoid.MaxHealth -- Retorna à saúde máxima
 end)
 
+-- High Jump (Pulo Alto)
 createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
-    -- Lógica para pulo alto
+    -- Aumenta o poder do pulo
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.JumpPower = 150 -- Aumenta o pulo para 150
 end, function()
-    -- Lógica para desativar o pulo alto
+    -- Retornar o pulo ao normal
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.JumpPower = 50 -- Pulo padrão do Roblox
 end)
 
+-- Reset (Resetar Status)
 createButton("Reset", UDim2.new(0, 10, 0, 360), function()
-    -- Lógica para resetar status
-end, function()
-    -- Lógica para desativar o reset
+    -- Reseta todas as modificações
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    humanoid.WalkSpeed = 16 -- Velocidade padrão
+    humanoid.JumpPower = 50 -- Pulo padrão
+    humanoid.Health = humanoid.MaxHealth -- Saúde padrão
+    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) -- Remove qualquer efeito de voo
 end)
+
