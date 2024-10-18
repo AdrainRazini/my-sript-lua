@@ -2,75 +2,68 @@
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
--- Função para criar frames de categoria com suporte a rolagem (ScrollFrame)
-local function createScrollableCategory(name, position)
-    local categoryFrame = Instance.new("Frame", screenGui)
-    categoryFrame.Size = UDim2.new(0, 300, 0, 50)
-    categoryFrame.Position = position
-    categoryFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-    categoryFrame.BorderSizePixel = 0
+-- Frame principal do menu
+local menuFrame = Instance.new("Frame", screenGui)
+menuFrame.Size = UDim2.new(0, 300, 0, 400)
+menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+menuFrame.BorderSizePixel = 0
 
-    local titleLabel = Instance.new("TextLabel", categoryFrame)
-    titleLabel.Size = UDim2.new(1, 0, 0, 50)
-    titleLabel.Text = name
-    titleLabel.TextColor3 = Color3.new(1, 1, 1)
-    titleLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-    titleLabel.Font = Enum.Font.SourceSansBold
-    titleLabel.TextSize = 24
+-- Título do menu
+local titleLabel = Instance.new("TextLabel", menuFrame)
+titleLabel.Size = UDim2.new(1, 0, 0, 50)
+titleLabel.Text = "Mod Menu"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 24
 
-    -- Botão de minimizar categoria
-    local minimizeButton = Instance.new("TextButton", categoryFrame)
-    minimizeButton.Size = UDim2.new(0, 50, 0, 50)
-    minimizeButton.Position = UDim2.new(1, -50, 0, 0)
-    minimizeButton.Text = "_"
-    minimizeButton.TextColor3 = Color3.new(1, 1, 1)
-    minimizeButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-    minimizeButton.Font = Enum.Font.SourceSansBold
-    minimizeButton.TextSize = 20
+-- Botão de minimizar
+local minimizeButton = Instance.new("TextButton", menuFrame)
+minimizeButton.Size = UDim2.new(0, 50, 0, 50)
+minimizeButton.Position = UDim2.new(1, -50, 0, 0)
+minimizeButton.Text = "_"
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+minimizeButton.Font = Enum.Font.SourceSansBold
+minimizeButton.TextSize = 20
 
-    -- Criar o ScrollFrame para deslizar os botões
-    local scrollFrame = Instance.new("ScrollingFrame", categoryFrame)
-    scrollFrame.Size = UDim2.new(1, 0, 0, 150)
-    scrollFrame.Position = UDim2.new(0, 0, 0, 50)
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 2, 0) -- Ajuste para aumentar a área de rolagem
-    scrollFrame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
-    scrollFrame.ScrollBarImageColor3 = Color3.new(0.4, 0.4, 0.4)
-    scrollFrame.Visible = true
-    scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y -- Permitir deslizar apenas na vertical
+local isMinimized = false
+local buttons = {}
 
-    -- Para mobile, ativar a rolagem com toque na tela
-    scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    scrollFrame.ScrollBarThickness = 10
+local function minimizeMenu()
+    isMinimized = true
+    menuFrame.Size = UDim2.new(0, 50, 0, 50)
+    menuFrame.Position = UDim2.new(1, -50, 0, 0)
 
-    local isMinimized = false
-    local function minimizeCategory()
-        isMinimized = true
-        categoryFrame.Size = UDim2.new(0, 300, 0, 50)
-        scrollFrame.Visible = false
+    for _, button in pairs(buttons) do
+        button.Visible = false
     end
-
-    local function expandCategory()
-        isMinimized = false
-        categoryFrame.Size = UDim2.new(0, 300, 0, 200)
-        scrollFrame.Visible = true
-    end
-
-    minimizeButton.MouseButton1Click:Connect(function()
-        if isMinimized then
-            expandCategory()
-        else
-            minimizeCategory()
-        end
-    end)
-
-    return scrollFrame
 end
 
--- Função para criar botões dentro de uma categoria
-local function createButton(parent, name, activateCallback, deactivateCallback)
-    local button = Instance.new("TextButton", parent)
+local function expandMenu()
+    isMinimized = false
+    menuFrame.Size = UDim2.new(0, 300, 0, 400)
+    menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+
+    for _, button in pairs(buttons) do
+        button.Visible = true
+    end
+end
+
+minimizeButton.MouseButton1Click:Connect(function()
+    if isMinimized then
+        expandMenu()
+    else
+        minimizeMenu()
+    end
+end)
+
+-- Função para criar botões no menu
+local function createButton(name, position, activateCallback, deactivateCallback)
+    local button = Instance.new("TextButton", menuFrame)
     button.Size = UDim2.new(1, -20, 0, 50)
-    button.Position = UDim2.new(0, 10, 0, #parent:GetChildren() * 60 - 60)
+    button.Position = position
     button.Text = name
     button.TextColor3 = Color3.new(1, 1, 1)
     button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
@@ -92,10 +85,14 @@ local function createButton(parent, name, activateCallback, deactivateCallback)
             end
         end
     end)
+
+    -- Adiciona o botão à tabela para controle de visibilidade
+    table.insert(buttons, button)
 end
 
 -- Função de voo
 local function flyLogic()
+    -- Obter o jogador e seu personagem
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:WaitForChild("Humanoid")
     local camera = game.Workspace.CurrentCamera
@@ -156,4 +153,39 @@ local function teleportOnClick()
 
     -- Espera por clique do mouse
     mouse.Button1Down:Connect(function()
-        local targetPosition = mouse.Hit.p -- Obté
+        local targetPosition = mouse.Hit.p -- Obtém a posição 3D do ponto clicado
+        teleportTo(targetPosition)
+    end)
+end
+
+-- Adicionar botão de voo
+local startFly, stopFly = flyLogic()
+createButton("Fly", UDim2.new(0, 10, 0, 60), startFly, stopFly)
+
+-- Botão de teleporte
+createButton("Teleport", UDim2.new(0, 10, 0, 120), teleportOnClick, nil)
+
+-- Outros botões do menu
+createButton("Speed Boost", UDim2.new(0, 10, 0, 180), function()
+    -- Lógica para aumentar a velocidade
+end, function()
+    -- Lógica para desativar o aumento de velocidade
+end)
+
+createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
+    -- Lógica para invencibilidade
+end, function()
+    -- Lógica para desativar a invencibilidade
+end)
+
+createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
+    -- Lógica para pulo alto
+end, function()
+    -- Lógica para desativar o pulo alto
+end)
+
+createButton("Reset", UDim2.new(0, 10, 0, 360), function()
+    -- Lógica para resetar status
+end, function()
+    -- Lógica para desativar o reset
+end)
