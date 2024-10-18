@@ -1,0 +1,56 @@
+-- Obter o jogador e seu personagem
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local camera = game.Workspace.CurrentCamera
+local primaryPart = character.PrimaryPart
+
+-- Variável para controlar o voo
+local flying = false
+
+-- Criar e configurar BodyVelocity e BodyGyro uma vez
+local bodyVelocity = Instance.new("BodyVelocity")
+bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+bodyVelocity.Velocity = Vector3.new()
+bodyVelocity.P = 10000
+bodyVelocity.Parent = primaryPart
+
+local bodyGyro = Instance.new("BodyGyro")
+bodyGyro.MaxTorque = Vector3.new(4000, 4000, 4000)
+bodyGyro.CFrame = primaryPart.CFrame
+bodyGyro.P = 3000
+bodyGyro.Parent = primaryPart
+
+-- Função para aplicar movimento para frente e estabilizar o voo
+local function applyMovement()
+    bodyVelocity.Velocity = camera.CFrame.LookVector * 100 -- Ajuste a velocidade conforme necessário
+    bodyGyro.CFrame = CFrame.new(primaryPart.Position, primaryPart.Position + camera.CFrame.LookVector)
+end
+
+-- Função para verificar se a tecla de pular foi pressionada
+local function onJumpRequest()
+    if humanoid:GetState() == Enum.HumanoidStateType.Seated then
+        return
+    end
+    if not flying then
+        flying = true
+        while flying and humanoid:GetState() ~= Enum.HumanoidStateType.Seated do
+            applyMovement()
+            wait(0.1) -- Ajuste o intervalo conforme necessário
+        end
+        flying = false
+    end
+end
+
+-- Função para parar de voar
+local function stopFlying()
+    flying = false
+    bodyVelocity.Velocity = Vector3.new()
+    bodyGyro.CFrame = primaryPart.CFrame
+end
+
+-- Conectar o evento de pular ao movimento
+humanoid.Jumping:Connect(onJumpRequest)
+
+-- Conectar o evento de encerrar o voo quando o personagem aterrissa
+humanoid.Landed:Connect(stopFlying)
