@@ -130,8 +130,8 @@ createButton("Teleport", UDim2.new(0, 10, 0, 180), function()
     -- Lógica para teleportar
 end)
 
-createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
-    -- Lógica para invencibilidade
+createButton("toolteleport", UDim2.new(0, 10, 0, 240), function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/teleport-tool"))()
 end)
 
 createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
