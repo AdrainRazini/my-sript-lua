@@ -7,7 +7,7 @@ menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
-menuFrame.BorderRadius = UDim.new(0, 10) -- Bordas arredondadas
+menuFrame.Visible = false -- Começa invisível
 
 -- Título do menu
 local titleLabel = Instance.new("TextLabel", menuFrame)
@@ -33,7 +33,7 @@ local buttons = {}
 
 local function minimizeMenu()
     isMinimized = true
-    menuFrame:TweenSize(UDim2.new(0, 50, 0, 50), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+    menuFrame.Size = UDim2.new(0, 50, 0, 50)
     menuFrame.Position = UDim2.new(1, -50, 0, 0)
 
     for _, button in pairs(buttons) do
@@ -43,7 +43,7 @@ end
 
 local function expandMenu()
     isMinimized = false
-    menuFrame:TweenSize(UDim2.new(0, 300, 0, 400), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+    menuFrame.Size = UDim2.new(0, 300, 0, 400)
     menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 
     for _, button in pairs(buttons) do
@@ -100,7 +100,6 @@ local function createButton(name, position, activateCallback, deactivateCallback
     button.BorderSizePixel = 0
     button.Font = Enum.Font.SourceSans
     button.TextSize = 20
-    button.BorderRadius = UDim.new(0, 5) -- Bordas arredondadas nos botões
 
     local isActive = false
 
@@ -123,9 +122,9 @@ end
 
 -- Exemplo de botões
 createButton("Fly", UDim2.new(0, 10, 0, 60), function()
-    -- Lógica para ativar voar
+    -- Lógica para voar
 end, function()
-    -- Lógica para desativar voar
+    -- Lógica para desativar a função de voar
 end)
 
 createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
@@ -157,3 +156,13 @@ createButton("Reset", UDim2.new(0, 10, 0, 360), function()
 end, function()
     -- Lógica para desativar o reset
 end)
+
+-- Função para mostrar o menu
+local function showMenu()
+    menuFrame.Visible = true
+    menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200) -- Posição inicial do deslizar
+    menuFrame:TweenPosition(UDim2.new(0.5, -150, 0.5, -200), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true) -- Deslizar para a posição desejada
+end
+
+-- Chamar a função para mostrar o menu quando o jogo começar
+showMenu()
