@@ -2,8 +2,8 @@
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
--- Função para criar frames de categoria
-local function createCategory(name, position)
+-- Função para criar frames de categoria com suporte a rolagem (ScrollFrame)
+local function createScrollableCategory(name, position)
     local categoryFrame = Instance.new("Frame", screenGui)
     categoryFrame.Size = UDim2.new(0, 300, 0, 50)
     categoryFrame.Position = position
@@ -28,23 +28,31 @@ local function createCategory(name, position)
     minimizeButton.Font = Enum.Font.SourceSansBold
     minimizeButton.TextSize = 20
 
-    local buttonsFrame = Instance.new("Frame", categoryFrame)
-    buttonsFrame.Size = UDim2.new(1, 0, 0, 0)
-    buttonsFrame.Position = UDim2.new(0, 0, 0, 50)
-    buttonsFrame.BackgroundTransparency = 1
+    -- Criar o ScrollFrame para deslizar os botões
+    local scrollFrame = Instance.new("ScrollingFrame", categoryFrame)
+    scrollFrame.Size = UDim2.new(1, 0, 0, 150)
+    scrollFrame.Position = UDim2.new(0, 0, 0, 50)
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 2, 0) -- Ajuste para aumentar a área de rolagem
+    scrollFrame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+    scrollFrame.ScrollBarImageColor3 = Color3.new(0.4, 0.4, 0.4)
+    scrollFrame.Visible = true
+    scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y -- Permitir deslizar apenas na vertical
+
+    -- Para mobile, ativar a rolagem com toque na tela
+    scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scrollFrame.ScrollBarThickness = 10
 
     local isMinimized = false
     local function minimizeCategory()
         isMinimized = true
         categoryFrame.Size = UDim2.new(0, 300, 0, 50)
-        buttonsFrame.Visible = false
+        scrollFrame.Visible = false
     end
 
     local function expandCategory()
         isMinimized = false
-        local buttonCount = #buttonsFrame:GetChildren() - 1 -- Exclui o frame vazio
-        categoryFrame.Size = UDim2.new(0, 300, 0, 50 + (buttonCount * 60))
-        buttonsFrame.Visible = true
+        categoryFrame.Size = UDim2.new(0, 300, 0, 200)
+        scrollFrame.Visible = true
     end
 
     minimizeButton.MouseButton1Click:Connect(function()
@@ -55,7 +63,7 @@ local function createCategory(name, position)
         end
     end)
 
-    return buttonsFrame
+    return scrollFrame
 end
 
 -- Função para criar botões dentro de uma categoria
@@ -148,44 +156,4 @@ local function teleportOnClick()
 
     -- Espera por clique do mouse
     mouse.Button1Down:Connect(function()
-        local targetPosition = mouse.Hit.p -- Obtém a posição 3D do ponto clicado
-        teleportTo(targetPosition)
-    end)
-end
-
--- Criar categorias de botões
-local flightCategory = createCategory("Flight Controls", UDim2.new(0.5, -150, 0.5, -200))
-local teleportCategory = createCategory("Teleport Controls", UDim2.new(0.5, -150, 0.5, -100))
-local miscCategory = createCategory("Misc Controls", UDim2.new(0.5, -150, 0.5, 0))
-
--- Adicionar botões na categoria de voo
-local startFly, stopFly = flyLogic()
-createButton(flightCategory, "Fly", startFly, stopFly)
-
--- Adicionar botões na categoria de teleporte
-createButton(teleportCategory, "Teleport", teleportOnClick)
-
--- Adicionar outros botões na categoria de controles diversos
-createButton(miscCategory, "Speed Boost", function()
-    -- Lógica para aumentar a velocidade
-end, function()
-    -- Lógica para desativar o aumento de velocidade
-end)
-
-createButton(miscCategory, "Invincible", function()
-    -- Lógica para invencibilidade
-end, function()
-    -- Lógica para desativar a invencibilidade
-end)
-
-createButton(miscCategory, "High Jump", function()
-    -- Lógica para pulo alto
-end, function()
-    -- Lógica para desativar o pulo alto
-end)
-
-createButton(miscCategory, "Reset", function()
-    -- Lógica para resetar status
-end, function()
-    -- Lógica para desativar o reset
-end)
+        local targetPosition = mouse.Hit.p -- Obté
