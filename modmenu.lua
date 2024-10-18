@@ -119,7 +119,7 @@ end
 
 -- Exemplo de botões
 createButton("Fly", UDim2.new(0, 10, 0, 60), function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/2679af32bcce184d58765cff7f406c04a6241994/Flying"))()
 end)
 
 createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
