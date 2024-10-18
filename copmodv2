@@ -1,13 +1,14 @@
--- Código principal do Mod Menu
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
--- Frame principal do menu
-local menuFrame = Instance.new("Frame", screenGui)
+-- ScrollingFrame para permitir deslizar
+local menuFrame = Instance.new("ScrollingFrame", screenGui)
 menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
+menuFrame.CanvasSize = UDim2.new(0, 0, 2, 0) -- Ajuste conforme necessário para permitir mais conteúdo
+menuFrame.ScrollBarThickness = 8 -- Espessura da barra de rolagem
 
 -- Título do menu
 local titleLabel = Instance.new("TextLabel", menuFrame)
@@ -92,16 +93,13 @@ end
 
 -- Função de voo
 local function flyLogic()
-    -- Obter o jogador e seu personagem
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:WaitForChild("Humanoid")
     local camera = game.Workspace.CurrentCamera
     local primaryPart = character.PrimaryPart
 
-    -- Variável para controlar o voo
     local flying = false
 
-    -- Criar e configurar BodyVelocity e BodyGyro
     local bodyVelocity = Instance.new("BodyVelocity")
     bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
     bodyVelocity.Velocity = Vector3.new()
@@ -114,26 +112,23 @@ local function flyLogic()
     bodyGyro.P = 3000
     bodyGyro.Parent = primaryPart
 
-    -- Função para aplicar movimento
     local function applyMovement()
-        bodyVelocity.Velocity = camera.CFrame.LookVector * 100 -- Ajuste a velocidade conforme necessário
+        bodyVelocity.Velocity = camera.CFrame.LookVector * 100
         bodyGyro.CFrame = CFrame.new(primaryPart.Position, primaryPart.Position + camera.CFrame.LookVector)
     end
 
-    -- Função para iniciar o voo
     local function startFlying()
         flying = true
         while flying and humanoid:GetState() ~= Enum.HumanoidStateType.Seated do
             applyMovement()
-            wait(0.1) -- Ajuste o intervalo conforme necessário
+            wait(0.1)
         end
     end
 
-    -- Função para parar o voo
     local function stopFlying()
         flying = false
-        bodyVelocity.Velocity = Vector3.new() -- Parar movimento
-        bodyGyro.CFrame = primaryPart.CFrame -- Resetar rotação
+        bodyVelocity.Velocity = Vector3.new()
+        bodyGyro.CFrame = primaryPart.CFrame
     end
 
     return startFlying, stopFlying
@@ -143,17 +138,15 @@ end
 local function teleportOnClick()
     local mouse = player:GetMouse()
 
-    -- Função que teleporta o jogador para a posição clicada
     local function teleportTo(position)
         local character = player.Character or player.CharacterAdded:Wait()
         local primaryPart = character.PrimaryPart
 
-        primaryPart.CFrame = CFrame.new(position) + Vector3.new(0, 3, 0) -- Teleporta o personagem 3 unidades acima para evitar colisão com o chão
+        primaryPart.CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)
     end
 
-    -- Espera por clique do mouse
     mouse.Button1Down:Connect(function()
-        local targetPosition = mouse.Hit.p -- Obtém a posição 3D do ponto clicado
+        local targetPosition = mouse.Hit.p
         teleportTo(targetPosition)
     end)
 end
