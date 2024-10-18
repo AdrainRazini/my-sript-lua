@@ -90,7 +90,7 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
 end)
 
 -- Função para criar botões no menu
-local function createButton(name, position, activateCallback, deactivateCallback, scriptUrl)
+local function createButton(name, position, scriptUrl)
     local button = Instance.new("TextButton", menuFrame)
     button.Size = UDim2.new(1, -20, 0, 50)
     button.Position = position
@@ -102,27 +102,23 @@ local function createButton(name, position, activateCallback, deactivateCallback
     button.TextSize = 20
 
     local isActive = false
+    local scriptInstance = nil
 
     button.MouseButton1Click:Connect(function()
         isActive = not isActive
         if isActive then
             button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
             if scriptUrl then
-                local script = loadstring(game:HttpGet(scriptUrl))() -- Carrega o script
-                activeScripts[scriptUrl] = script -- Adiciona à tabela de scripts ativos
+                scriptInstance = loadstring(game:HttpGet(scriptUrl))() -- Carrega o script
+                activeScripts[scriptUrl] = scriptInstance -- Adiciona à tabela de scripts ativos
             end
-            activateCallback() -- Chama a lógica para ativar a função
         else
             button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
-            if deactivateCallback then
-                deactivateCallback() -- Chama a lógica para desativar a função
-            end
-            if scriptUrl then
-                -- Remove o script ativo se houver
-                if activeScripts[scriptUrl] then
-                    activeScripts[scriptUrl]:Destroy() -- Destroi o script
-                    activeScripts[scriptUrl] = nil -- Remove da tabela
-                end
+            if scriptInstance then
+                -- Destroi o script ativo se houver
+                scriptInstance:Destroy() -- Destroi o script
+                activeScripts[scriptUrl] = nil -- Remove da tabela
+                scriptInstance = nil
             end
         end
     end)
@@ -132,17 +128,6 @@ local function createButton(name, position, activateCallback, deactivateCallback
 end
 
 -- Exemplo de botões com links
-createButton("Teleport Script", UDim2.new(0, 10, 0, 60), function()
-    print("Teleport script ativado")
-end, function()
-    print("Teleport script desativado")
-end, "https://raw.githubusercontent.com/AdrainRazini/my-script-lua/refs/heads/main/teleport-tool")
-
-createButton("Speed Script", UDim2.new(0, 10, 0, 120), function()
-    print("Speed script ativado")
-end, function()
-    print("Speed script desativado")
-end, "https://raw.githubusercontent.com/AdrainRazini/my-script-lua/refs/heads/main/speed-tool")
+createButton("Flying Script", UDim2.new(0, 10, 0, 60), "https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/2679af32bcce184d58765cff7f406c04a6241994/Flying")
 
 -- Adicione mais botões conforme necessário
-
