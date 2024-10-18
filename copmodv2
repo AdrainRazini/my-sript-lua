@@ -1,3 +1,4 @@
+-- Código principal do Mod Menu
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
@@ -58,36 +59,6 @@ minimizeButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Função para arrastar
-local dragging
-local dragStart
-local startPos
-
-local function updatePosition(input)
-    local delta = input.Position - dragStart
-    menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-menuFrame.InputBegan:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not isMinimized then
-        dragging = true
-        dragStart = input.Position
-        startPos = menuFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        updatePosition(input)
-    end
-end)
-
 -- Função para criar botões no menu
 local function createButton(name, position, activateCallback, deactivateCallback)
     local button = Instance.new("TextButton", menuFrame)
@@ -106,11 +77,11 @@ local function createButton(name, position, activateCallback, deactivateCallback
         isActive = not isActive
         if isActive then
             button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
-            activateCallback() -- Chama a lógica para ativar a função
+            activateCallback() -- Ativar função
         else
             button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
             if deactivateCallback then
-                deactivateCallback() -- Chama a lógica para desativar a função
+                deactivateCallback() -- Desativar função
             end
         end
     end)
@@ -119,66 +90,86 @@ local function createButton(name, position, activateCallback, deactivateCallback
     table.insert(buttons, button)
 end
 
--- Fly (Ativa voo)
-createButton("Fly", UDim2.new(0, 10, 0, 60), function()
-    -- Ativar voo (exemplo de lógica para voar)
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-    humanoid.PlatformStand = true
-end, function()
-    -- Desativar voo
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-    humanoid.PlatformStand = false
-end)
+-- Função de voo
+local function flyLogic()
+    -- Obter o jogador e seu personagem
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local camera = game.Workspace.CurrentCamera
+    local primaryPart = character.PrimaryPart
 
--- Speed Boost (Aumento de Velocidade)
+    -- Variável para controlar o voo
+    local flying = false
+
+    -- Criar e configurar BodyVelocity e BodyGyro
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+    bodyVelocity.Velocity = Vector3.new()
+    bodyVelocity.P = 10000
+    bodyVelocity.Parent = primaryPart
+
+    local bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.MaxTorque = Vector3.new(4000, 4000, 4000)
+    bodyGyro.CFrame = primaryPart.CFrame
+    bodyGyro.P = 3000
+    bodyGyro.Parent = primaryPart
+
+    -- Função para aplicar movimento
+    local function applyMovement()
+        bodyVelocity.Velocity = camera.CFrame.LookVector * 100 -- Ajuste a velocidade conforme necessário
+        bodyGyro.CFrame = CFrame.new(primaryPart.Position, primaryPart.Position + camera.CFrame.LookVector)
+    end
+
+    -- Função para iniciar o voo
+    local function startFlying()
+        flying = true
+        while flying and humanoid:GetState() ~= Enum.HumanoidStateType.Seated do
+            applyMovement()
+            wait(0.1) -- Ajuste o intervalo conforme necessário
+        end
+    end
+
+    -- Função para parar o voo
+    local function stopFlying()
+        flying = false
+        bodyVelocity.Velocity = Vector3.new() -- Parar movimento
+        bodyGyro.CFrame = primaryPart.CFrame -- Resetar rotação
+    end
+
+    return startFlying, stopFlying
+end
+
+-- Adicionar botão de voo
+local startFly, stopFly = flyLogic()
+createButton("Fly", UDim2.new(0, 10, 0, 60), startFly, stopFly)
+
+-- Outros botões do menu
 createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
-    -- Aumentar a velocidade
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.WalkSpeed = 50 -- Define velocidade para 50
+    -- Lógica para aumentar a velocidade
 end, function()
-    -- Retornar velocidade ao normal
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.WalkSpeed = 16 -- Velocidade padrão do Roblox
+    -- Lógica para desativar o aumento de velocidade
 end)
 
--- Teleport (Teleporte)
 createButton("Teleport", UDim2.new(0, 10, 0, 180), function()
-    -- Teleporta o jogador para uma posição aleatória no mapa
-    local randomPosition = Vector3.new(math.random(-500, 500), 50, math.random(-500, 500))
-    player.Character:SetPrimaryPartCFrame(CFrame.new(randomPosition))
+    -- Lógica para teleportar
+end, function()
+    -- Lógica para desativar o teleport
 end)
 
--- Invincible (Invencível)
 createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
-    -- Tornar jogador invencível
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.Health = math.huge -- Saúde infinita
+    -- Lógica para invencibilidade
 end, function()
-    -- Remover invencibilidade
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.Health = humanoid.MaxHealth -- Retorna à saúde máxima
+    -- Lógica para desativar a invencibilidade
 end)
 
--- High Jump (Pulo Alto)
 createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
-    -- Aumenta o poder do pulo
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.JumpPower = 150 -- Aumenta o pulo para 150
+    -- Lógica para pulo alto
 end, function()
-    -- Retornar o pulo ao normal
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.JumpPower = 50 -- Pulo padrão do Roblox
+    -- Lógica para desativar o pulo alto
 end)
 
--- Reset (Resetar Status)
 createButton("Reset", UDim2.new(0, 10, 0, 360), function()
-    -- Reseta todas as modificações
-    local humanoid = player.Character:WaitForChild("Humanoid")
-    humanoid.WalkSpeed = 16 -- Velocidade padrão
-    humanoid.JumpPower = 50 -- Pulo padrão
-    humanoid.Health = humanoid.MaxHealth -- Saúde padrão
-    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) -- Remove qualquer efeito de voo
+    -- Lógica para resetar status
+end, function()
+    -- Lógica para desativar o reset
 end)
-
