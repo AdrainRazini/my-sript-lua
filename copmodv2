@@ -29,7 +29,6 @@ minimizeButton.TextSize = 20
 
 local isMinimized = false
 local buttons = {}
-local activeScripts = {}  -- Tabela para rastrear scripts ativos
 
 local function minimizeMenu()
     isMinimized = true
@@ -102,28 +101,29 @@ local function createButton(name, position, scriptUrl)
     button.TextSize = 20
 
     local isActive = false
-    local scriptInstance = nil
+    local flyingEnabled = false  -- Variável para rastrear se o voo está ativado
 
     button.MouseButton1Click:Connect(function()
         isActive = not isActive
         if isActive then
             button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
             if scriptUrl then
-                scriptInstance = loadstring(game:HttpGet(scriptUrl))() -- Carrega o script
-                activeScripts[scriptUrl] = scriptInstance -- Adiciona à tabela de scripts ativos
+                if not flyingEnabled then
+                    flyingEnabled = true
+                    loadstring(game:HttpGet(scriptUrl))() -- Carrega o script de voo
+                end
             end
         else
             button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
-            if scriptInstance then
-                -- Destroi o script ativo se houver
-                scriptInstance:Destroy() -- Destroi o script
-                activeScripts[scriptUrl] = nil -- Remove da tabela
-                scriptInstance = nil
+            if flyingEnabled then
+                flyingEnabled = false
+                -- Para o script de voo
+                player.Character.Humanoid.PlatformStand = false -- Desativa o voo
             end
         end
     end)
 
-    -- Adiciona o botão à tabela para controle de visibilidade
+    -- Adiciona o botão à tabela
     table.insert(buttons, button)
 end
 
