@@ -1,14 +1,12 @@
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
--- ScrollingFrame para permitir deslizar
-local menuFrame = Instance.new("ScrollingFrame", screenGui)
+-- Frame principal do menu
+local menuFrame = Instance.new("Frame", screenGui)
 menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
-menuFrame.CanvasSize = UDim2.new(0, 0, 2, 0) -- Ajuste conforme necessário para permitir mais conteúdo
-menuFrame.ScrollBarThickness = 8 -- Espessura da barra de rolagem
 
 -- Título do menu
 local titleLabel = Instance.new("TextLabel", menuFrame)
@@ -99,7 +97,6 @@ local function flyLogic()
     local primaryPart = character.PrimaryPart
 
     local flying = false
-
     local bodyVelocity = Instance.new("BodyVelocity")
     bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
     bodyVelocity.Velocity = Vector3.new()
@@ -127,8 +124,8 @@ local function flyLogic()
 
     local function stopFlying()
         flying = false
-        bodyVelocity.Velocity = Vector3.new()
-        bodyGyro.CFrame = primaryPart.CFrame
+        bodyVelocity.Velocity = Vector3.new() -- Parar movimento
+        bodyGyro.CFrame = primaryPart.CFrame -- Resetar rotação
     end
 
     return startFlying, stopFlying
@@ -182,3 +179,30 @@ createButton("Reset", UDim2.new(0, 10, 0, 360), function()
 end, function()
     -- Lógica para desativar o reset
 end)
+
+-- Função para deslizar
+local function slideLogic()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local primaryPart = character.PrimaryPart
+
+    local sliding = false
+
+    local function startSliding()
+        sliding = true
+        humanoid.PlatformStand = true
+        -- Lógica para deslizar (ex: alterar a velocidade, animação, etc.)
+    end
+
+    local function stopSliding()
+        sliding = false
+        humanoid.PlatformStand = false
+        -- Lógica para parar de deslizar
+    end
+
+    return startSliding, stopSliding
+end
+
+-- Adicionar botão de deslizar
+local startSlide, stopSlide = slideLogic()
+createButton("Slide", UDim2.new(0, 10, 0, 420), startSlide, stopSlide)
