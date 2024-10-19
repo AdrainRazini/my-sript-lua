@@ -148,7 +148,7 @@ createButton("Reset", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
 
-
+-- Novos botões com "Text" e loadstring
 createButton("Text 1", function()
     loadstring(game:HttpGet("https://example.com/script1"))()
 end)
@@ -181,7 +181,6 @@ createButton("Text 8", function()
     loadstring(game:HttpGet("https://example.com/script8"))()
 end)
 
-
 -- Função para controlar páginas
 local function updateButtonVisibility()
     local totalButtons = #buttons
@@ -212,7 +211,6 @@ nextButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
 nextButton.Font = Enum.Font.SourceSans
 nextButton.TextSize = 20
 
--- Funções para navegação de páginas
 prevButton.MouseButton1Click:Connect(function()
     if currentPage > 1 then
         currentPage = currentPage - 1
@@ -221,11 +219,11 @@ prevButton.MouseButton1Click:Connect(function()
 end)
 
 nextButton.MouseButton1Click:Connect(function()
-    if currentPage * buttonsPerPage < #buttons then
+    local totalButtons = #buttons
+    if currentPage < math.ceil(totalButtons / buttonsPerPage) then
         currentPage = currentPage + 1
         updateButtonVisibility()
     end
 end)
 
--- Inicializa a visibilidade dos botões
-updateButtonVisibility()
+updateButtonVisibility() -- Atualiza a visibilidade dos botões ao iniciar
