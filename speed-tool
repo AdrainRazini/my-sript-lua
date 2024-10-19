@@ -36,7 +36,7 @@ local animTrack
 
 tool.Equipped:Connect(function()
     -- Aumenta a velocidade
-    character.Humanoid.WalkSpeed = 25  -- 16 é a velocidade padrão, então 16 * 5 = 80
+    character.Humanoid.WalkSpeed = 50  -- 16 é a velocidade padrão, então 16 * 5 = 80
     animTrack = animator:LoadAnimation(animation)
     animTrack:Play()
 end)
