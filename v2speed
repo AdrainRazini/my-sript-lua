@@ -21,39 +21,32 @@ local texture = Instance.new("Decal")
 texture.Texture = "rbxassetid://123456789"  -- Substitua pelo ID da sua textura
 texture.Parent = handle
 
--- Cria o AnimationController para controlar animações
-local animator = Instance.new("AnimationController")
-animator.Name = "AnimationController"
-animator.Parent = tool
-
--- Cria uma animação e define seu conteúdo
-local animation = Instance.new("Animation")
-animation.AnimationId = "rbxassetid://987654321"  -- Substitua pelo ID da sua animação
-animation.Parent = animator
-
 -- Cria a GUI de controle de velocidade
 local speedGui = Instance.new("ScreenGui", player.PlayerGui)
 local frame = Instance.new("Frame", speedGui)
-frame.Size = UDim2.new(0, 200, 0, 120)
+frame.Size = UDim2.new(0, 200, 0, 150)
 frame.Position = UDim2.new(1, -210, 0, 10)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BackgroundTransparency = 0.5
-frame.Visible = false  -- Esconde a GUI inicialmente
-
-local speedSlider = Instance.new("Slider", frame)  -- Slider para ajuste de velocidade
-speedSlider.Size = UDim2.new(1, -40, 0, 40)
-speedSlider.Position = UDim2.new(0, 20, 0, 10)
-speedSlider.MinValue = 16  -- Velocidade mínima
-speedSlider.MaxValue = 100  -- Velocidade máxima
-speedSlider.Value = 16  -- Velocidade inicial
-speedSlider.BackgroundColor3 = Color3.new(1, 1, 1)
+frame.Visible = false  -- Inicialmente invisível
 
 local speedLabel = Instance.new("TextLabel", frame)
-speedLabel.Size = UDim2.new(1, 0, 0, 30)
-speedLabel.Position = UDim2.new(0, 0, 0, 60)
+speedLabel.Size = UDim2.new(1, 0, 0, 50)
 speedLabel.BackgroundColor3 = Color3.new(0, 0, 0)
 speedLabel.TextColor3 = Color3.new(1, 1, 1)
-speedLabel.Text = "Velocidade: " .. speedSlider.Value
+speedLabel.Text = "Velocidade: 16"
+
+local speedInput = Instance.new("TextBox", frame)
+speedInput.Size = UDim2.new(1, 0, 0, 50)
+speedInput.Position = UDim2.new(0, 0, 0, 50)
+speedInput.BackgroundColor3 = Color3.new(1, 1, 1)
+speedInput.PlaceholderText = "Defina a velocidade"
+
+local setSpeedButton = Instance.new("TextButton", frame)
+setSpeedButton.Size = UDim2.new(1, 0, 0, 50)
+setSpeedButton.Position = UDim2.new(0, 0, 0, 100)
+setSpeedButton.Text = "Ajustar Velocidade"
+setSpeedButton.BackgroundColor3 = Color3.new(0, 1, 0)
 
 local minimizeButton = Instance.new("TextButton", frame)
 minimizeButton.Size = UDim2.new(0, 30, 0, 30)
@@ -61,37 +54,32 @@ minimizeButton.Position = UDim2.new(1, -30, 0, 0)
 minimizeButton.Text = "-"
 minimizeButton.BackgroundColor3 = Color3.new(1, 0, 0)
 
--- Atualiza a velocidade do jogador
-local function updateSpeed()
-    character.Humanoid.WalkSpeed = speedSlider.Value
-    speedLabel.Text = "Velocidade: " .. speedSlider.Value
-end
-
--- Conecta o evento de mudança do slider
-speedSlider.Changed:Connect(updateSpeed)
-
--- Minimiza a GUI
-minimizeButton.MouseButton1Click:Connect(function()
-    frame.Visible = not frame.Visible
-end)
-
 local animTrack
 
 tool.Equipped:Connect(function()
     -- Aumenta a velocidade
-    character.Humanoid.WalkSpeed = speedSlider.Value  -- Define a velocidade inicial
-    animTrack = animator:LoadAnimation(animation)
-    animTrack:Play()
+    character.Humanoid.WalkSpeed = 16  -- Restaura a velocidade padrão
     speedGui.Enabled = true  -- Mostra a GUI
 end)
 
 tool.Unequipped:Connect(function()
     -- Restaura a velocidade
     character.Humanoid.WalkSpeed = 16  -- Restaura a velocidade padrão
-    if animTrack then
-        animTrack:Stop()
-    end
     speedGui.Enabled = false  -- Esconde a GUI
+end)
+
+setSpeedButton.MouseButton1Click:Connect(function()
+    local newSpeed = tonumber(speedInput.Text) or 16  -- Pega a velocidade do TextBox ou usa 16 se inválido
+    if newSpeed >= 0 and newSpeed <= 50 then  -- Limita a velocidade entre 0 e 50
+        character.Humanoid.WalkSpeed = newSpeed
+        speedLabel.Text = "Velocidade: " .. newSpeed
+    else
+        speedLabel.Text = "Velocidade fora do limite!"
+    end
+end)
+
+minimizeButton.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
 end)
 
 -- Adiciona a ferramenta à mochila do jogador
