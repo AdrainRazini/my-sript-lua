@@ -1,0 +1,209 @@
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+
+-- Frame principal do menu
+local menuFrame = Instance.new("Frame", screenGui)
+menuFrame.Size = UDim2.new(0, 300, 0, 400)
+menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+menuFrame.BorderSizePixel = 0
+
+-- Título do menu
+local titleLabel = Instance.new("TextLabel", menuFrame)
+titleLabel.Size = UDim2.new(1, 0, 0, 50)
+titleLabel.Text = "Mod Menu"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 24
+
+-- Botão de minimizar
+local minimizeButton = Instance.new("TextButton", menuFrame)
+minimizeButton.Size = UDim2.new(0, 50, 0, 50)
+minimizeButton.Position = UDim2.new(1, -50, 0, 0)
+minimizeButton.Text = "_"
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+minimizeButton.Font = Enum.Font.SourceSansBold
+minimizeButton.TextSize = 20
+
+local isMinimized = false
+local buttons = {}
+local buttonsPerPage = 5
+local currentPage = 1
+local totalPages = 0
+
+local function updateButtonVisibility()
+    for i, button in ipairs(buttons) do
+        button.Visible = (i > (currentPage - 1) * buttonsPerPage and i <= currentPage * buttonsPerPage)
+    end
+end
+
+local function minimizeMenu()
+    isMinimized = true
+    menuFrame.Size = UDim2.new(0, 50, 0, 50)
+    menuFrame.Position = UDim2.new(1, -50, 0, 0)
+    updateButtonVisibility()
+end
+
+local function expandMenu()
+    isMinimized = false
+    menuFrame.Size = UDim2.new(0, 300, 0, 400)
+    menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+    updateButtonVisibility()
+end
+
+minimizeButton.MouseButton1Click:Connect(function()
+    if isMinimized then
+        expandMenu()
+    else
+        minimizeMenu()
+    end
+end)
+
+-- Função para arrastar
+local dragging
+local dragStart
+local startPos
+
+local function updatePosition(input)
+    local delta = input.Position - dragStart
+    menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+menuFrame.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not isMinimized then
+        dragging = true
+        dragStart = input.Position
+        startPos = menuFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        updatePosition(input)
+    end
+end)
+
+-- Layout para os botões
+local uiListLayout = Instance.new("UIListLayout", menuFrame)
+uiListLayout.Padding = UDim.new(0, 10) -- Espaçamento entre os botões
+
+-- Função para criar botões no menu
+local function createButton(name, activateCallback, deactivateCallback)
+    local button = Instance.new("TextButton", menuFrame)
+    button.Size = UDim2.new(1, -20, 0, 50)
+    button.Text = name
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+    button.BorderSizePixel = 0
+    button.Font = Enum.Font.SourceSans
+    button.TextSize = 20
+
+    local isActive = false
+
+    button.MouseButton1Click:Connect(function()
+        isActive = not isActive
+        if isActive then
+            button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
+            activateCallback() -- Chama a lógica para ativar a função
+        else
+            button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
+            if deactivateCallback then
+                deactivateCallback() -- Chama a lógica para desativar a função
+            end
+        end
+    end)
+
+    -- Adiciona o botão à tabela para controle de visibilidade
+    table.insert(buttons, button)
+end
+
+-- Exemplo de botões
+createButton("Fly tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
+end)
+
+createButton("Speed Boost tool", function()
+    -- Lógica para aumentar a velocidade
+end, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speed-tool"))()
+end)
+
+createButton("Teleport tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/teleport-tool"))()
+end)
+
+createButton("Rain tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/rain%20tool"))()
+end)
+
+createButton("Jump tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/jump%20tool"))()
+end)
+
+createButton("Reset players", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/playerexpttool"))()
+end)
+
+createButton("Kit Hack", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/kit%20hack"))()
+end)
+
+createButton("Reset", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
+end)
+
+-- Botões de navegação
+local prevButton = Instance.new("TextButton", menuFrame)
+prevButton.Size = UDim2.new(0.45, 0, 0, 50)
+prevButton.Position = UDim2.new(0.05, 0, 1, -60)
+prevButton.Text = "Anterior"
+prevButton.TextColor3 = Color3.new(1, 1, 1)
+prevButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+prevButton.BorderSizePixel = 0
+prevButton.Font = Enum.Font.SourceSans
+prevButton.TextSize = 20
+prevButton.Visible = false
+
+local nextButton = Instance.new("TextButton", menuFrame)
+nextButton.Size = UDim2.new(0.45, 0, 0, 50)
+nextButton.Position = UDim2.new(0.5, 0, 1, -60)
+nextButton.Text = "Próximo"
+nextButton.TextColor3 = Color3.new(1, 1, 1)
+nextButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+nextButton.BorderSizePixel = 0
+nextButton.Font = Enum.Font.SourceSans
+nextButton.TextSize = 20
+
+totalPages = math.ceil(#buttons / buttonsPerPage)
+
+local function updateNavigationButtons()
+    prevButton.Visible = currentPage > 1
+    nextButton.Visible = currentPage < totalPages
+end
+
+prevButton.MouseButton1Click:Connect(function()
+    if currentPage > 1 then
+        currentPage = currentPage - 1
+        updateButtonVisibility()
+        updateNavigationButtons()
+    end
+end)
+
+nextButton.MouseButton1Click:Connect(function()
+    if currentPage < totalPages then
+        currentPage = currentPage + 1
+        updateButtonVisibility()
+        updateNavigationButtons()
+    end
+end)
+
+updateButtonVisibility()
+updateNavigationButtons()
