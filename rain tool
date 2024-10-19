@@ -30,6 +30,27 @@ tool.Equipped:Connect(function()
     else
         print("Raio não atingiu nada.")
     end
+
+    -- Adiciona efeito de raio ao jogador
+    local particleEmitter = Instance.new("ParticleEmitter")
+    particleEmitter.Color = ColorSequence.new(Color3.fromRGB(255, 165, 0)) -- Laranja
+    particleEmitter.Size = NumberSequence.new(1)
+    particleEmitter.Lifetime = NumberRange.new(0.5)
+    particleEmitter.Rate = 50
+    particleEmitter.Speed = NumberRange.new(5)
+    particleEmitter.Parent = humanoidRootPart
+
+    -- Adiciona luz ao jogador
+    local pointLight = Instance.new("PointLight")
+    pointLight.Color = Color3.fromRGB(255, 165, 0) -- Laranja
+    pointLight.Range = 10
+    pointLight.Brightness = 2
+    pointLight.Parent = humanoidRootPart
+
+    -- Remove os efeitos após 2 segundos
+    wait(2)
+    particleEmitter:Destroy()
+    pointLight:Destroy()
 end)
 
 tool.Parent = game.Players.LocalPlayer.Backpack
