@@ -120,20 +120,20 @@ local function createButton(name, position, activateCallback, deactivateCallback
 end
 
 -- Exemplo de botões
-createButton("Fly", UDim2.new(0, 10, 0, 60), function()
-
+createButton("Fly tool", UDim2.new(0, 10, 0, 60), function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
 end, function()
     -- Lógica para desativar a função de voar, se necessário
 end)
 
-createButton("Speed Boost", UDim2.new(0, 10, 0, 120), function()
+createButton("Speed Boost tool", UDim2.new(0, 10, 0, 120), function()
     -- Lógica para aumentar a velocidade
 end, function()
-    -- Lógica para desativar o aumento de velocidade
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speed-tool"))()
 end)
 
-createButton("Teleport", UDim2.new(0, 10, 0, 180), function()
-    -- Lógica para teleportar
+createButton("Teleport tool", UDim2.new(0, 10, 0, 180), function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/teleport-tool"))()
 end, function()
     -- Lógica para desativar o teleport
 end)
@@ -145,13 +145,13 @@ end, function()
 end)
 
 createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
-    -- Lógica para pulo alto
+ loadstring(game:HttpGet(""))()
 end, function()
     -- Lógica para desativar o pulo alto
 end)
 
 createButton("Reset", UDim2.new(0, 10, 0, 360), function()
-    -- Lógica para resetar status
+  loadstring(game:HttpGet(""))()
 end, function()
     -- Lógica para desativar o reset
 end)
