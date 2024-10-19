@@ -119,7 +119,9 @@ local function createButton(name, activateCallback)
     -- Adiciona o botão à tabela para controle de visibilidade
     table.insert(buttons, button)
 end
-
+createButton("INVENTÁRIO", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Inventory%20para%20jogos%20que%20nao%20tem"))()
+end)
 -- Funções de ativação para os botões
 createButton("Fly tool", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
@@ -149,8 +151,8 @@ createButton("Kit Hack", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/kit%20hack"))()
 end)
 
-createButton("Reset", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
+createButton("INVENTÁRIO", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Inventory%20para%20jogos%20que%20nao%20tem"))()
 end)
 
 -- Função para controlar páginas
