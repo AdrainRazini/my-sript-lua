@@ -138,14 +138,14 @@ end, function()
     -- Lógica para desativar o teleport
 end)
 
-createButton("Invincible", UDim2.new(0, 10, 0, 240), function()
-    -- Lógica para invencibilidade
+createButton("rain tool", UDim2.new(0, 10, 0, 240), function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/rain%20tool"))()
 end, function()
     -- Lógica para desativar a invencibilidade
 end)
 
-createButton("High Jump", UDim2.new(0, 10, 0, 300), function()
- loadstring(game:HttpGet(""))()
+createButton("Jump tool", UDim2.new(0, 10, 0, 300), function()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/jump%20tool"))()
 end, function()
     -- Lógica para desativar o pulo alto
 end)
