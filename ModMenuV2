@@ -88,11 +88,14 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
     end
 end)
 
+-- Layout para os botões
+local uiListLayout = Instance.new("UIListLayout", menuFrame)
+uiListLayout.Padding = UDim.new(0, 10) -- Espaçamento entre os botões
+
 -- Função para criar botões no menu
-local function createButton(name, position, activateCallback, deactivateCallback)
+local function createButton(name, activateCallback, deactivateCallback)
     local button = Instance.new("TextButton", menuFrame)
     button.Size = UDim2.new(1, -20, 0, 50)
-    button.Position = position
     button.Text = name
     button.TextColor3 = Color3.new(1, 1, 1)
     button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
@@ -120,51 +123,36 @@ local function createButton(name, position, activateCallback, deactivateCallback
 end
 
 -- Exemplo de botões
-createButton("Fly tool", UDim2.new(0, 10, 0, 60), function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
-end, function()
-    -- Lógica para desativar a função de voar, se necessário
+createButton("Fly tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
 end)
 
-createButton("Speed Boost tool", UDim2.new(0, 10, 0, 120), function()
+createButton("Speed Boost tool", function()
     -- Lógica para aumentar a velocidade
 end, function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speed-tool"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speed-tool"))()
 end)
 
-createButton("Teleport tool", UDim2.new(0, 10, 0, 180), function()
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/teleport-tool"))()
-end, function()
-    -- Lógica para desativar o teleport
+createButton("Teleport tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/teleport-tool"))()
 end)
 
-createButton("rain tool", UDim2.new(0, 10, 0, 240), function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/rain%20tool"))()
-end, function()
-    -- Lógica para desativar a invencibilidade
+createButton("Rain tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/rain%20tool"))()
 end)
 
-createButton("Jump tool", UDim2.new(0, 10, 0, 300), function()
- loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/jump%20tool"))()
-end, function()
-    -- Lógica para desativar o pulo alto
+createButton("Jump tool", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/jump%20tool"))()
 end)
 
-createButton("Reset players", UDim2.new(0, 10, 0, 360), function()
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/playerexpttool"))()
-end, function()
-    -- Lógica para desativar o reset
+createButton("Reset players", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/playerexpttool"))()
 end)
 
-createButton("kit hack", UDim2.new(0, 10, 0, 360), function()
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/kit%20hack"))()
-end, function()
-    -- Lógica para desativar o reset
+createButton("Kit Hack", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/kit%20hack"))()
 end)
 
-
-createButton("Reset", UDim2.new(0, 10, 0, 360), function()
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
-end, function()
-    -- Lógica para desativar o reset
+createButton("Reset", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
