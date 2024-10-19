@@ -1,8 +1,8 @@
 local player = game.Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local userInputService = game:GetService("UserInputService")
 
--- Frame principal do menu
+-- Criação da interface gráfica
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 local menuFrame = Instance.new("Frame", screenGui)
 menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
@@ -28,31 +28,94 @@ minimizeButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
 minimizeButton.Font = Enum.Font.SourceSansBold
 minimizeButton.TextSize = 20
 
+-- Variáveis para controle do menu
 local isMinimized = false
-local buttons = {}
-local buttonsPerPage = 5
 local currentPage = 1
+local buttonsPerPage = 4
+local buttons = {}
 
--- Função para criar botões
+local function minimizeMenu()
+    isMinimized = true
+    menuFrame.Size = UDim2.new(0, 50, 0, 50)
+    menuFrame.Position = UDim2.new(1, -50, 0, 0)
+
+    for _, button in pairs(buttons) do
+        button.Visible = false
+    end
+end
+
+local function expandMenu()
+    isMinimized = false
+    menuFrame.Size = UDim2.new(0, 300, 0, 400)
+    menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+
+    for _, button in pairs(buttons) do
+        button.Visible = true
+    end
+end
+
+minimizeButton.MouseButton1Click:Connect(function()
+    if isMinimized then
+        expandMenu()
+    else
+        minimizeMenu()
+    end
+end)
+
+-- Função para arrastar o menu
+local dragging
+local dragStart
+local startPos
+
+local function updatePosition(input)
+    local delta = input.Position - dragStart
+    menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+menuFrame.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not isMinimized then
+        dragging = true
+        dragStart = input.Position
+        startPos = menuFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+userInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        updatePosition(input)
+    end
+end)
+
+-- Layout para os botões
+local uiListLayout = Instance.new("UIListLayout", menuFrame)
+uiListLayout.Padding = UDim.new(0, 10) -- Espaçamento entre os botões
+
+-- Função para criar botões no menu
 local function createButton(name, activateCallback)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(0, 250, 0, 50)
+    local button = Instance.new("TextButton", menuFrame)
+    button.Size = UDim2.new(1, -20, 0, 50)
     button.Text = name
     button.TextColor3 = Color3.new(1, 1, 1)
     button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
     button.BorderSizePixel = 0
     button.Font = Enum.Font.SourceSans
     button.TextSize = 20
-    button.Parent = menuFrame
 
     button.MouseButton1Click:Connect(function()
-        activateCallback()
+        activateCallback() -- Chama a lógica para ativar a função
     end)
 
+    -- Adiciona o botão à tabela para controle de visibilidade
     table.insert(buttons, button)
 end
 
--- Exemplo de botões
+-- Funções de ativação para os botões
 createButton("Fly tool", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
 end)
@@ -85,65 +148,50 @@ createButton("Reset", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
 
--- Função para mostrar botões da página atual
-local function showButtons(page)
-    for i, button in ipairs(buttons) do
-        button.Visible = (i > (page - 1) * buttonsPerPage and i <= page * buttonsPerPage)
-    end
-end
+-- Função para controlar páginas
+local function updateButtonVisibility()
+    local totalButtons = #buttons
+    local startIndex = (currentPage - 1) * buttonsPerPage + 1
+    local endIndex = math.min(startIndex + buttonsPerPage - 1, totalButtons)
 
--- Função para mudar de página
-local function changePage(direction)
-    currentPage = math.clamp(currentPage + direction, 1, math.ceil(#buttons / buttonsPerPage))
-    showButtons(currentPage)
+    for i, button in ipairs(buttons) do
+        button.Visible = (i >= startIndex and i <= endIndex)
+    end
 end
 
 -- Botões de navegação
 local prevButton = Instance.new("TextButton", menuFrame)
-prevButton.Size = UDim2.new(0, 100, 0, 50)
-prevButton.Position = UDim2.new(0, 10, 0, 360)
+prevButton.Size = UDim2.new(0.5, -10, 0, 50)
+prevButton.Position = UDim2.new(0, 0, 1, -60)
 prevButton.Text = "Anterior"
 prevButton.TextColor3 = Color3.new(1, 1, 1)
 prevButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
 prevButton.Font = Enum.Font.SourceSans
 prevButton.TextSize = 20
-prevButton.MouseButton1Click:Connect(function()
-    changePage(-1)
-end)
 
 local nextButton = Instance.new("TextButton", menuFrame)
-nextButton.Size = UDim2.new(0, 100, 0, 50)
-nextButton.Position = UDim2.new(1, -110, 0, 360)
+nextButton.Size = UDim2.new(0.5, -10, 0, 50)
+nextButton.Position = UDim2.new(0.5, 10, 1, -60)
 nextButton.Text = "Próximo"
 nextButton.TextColor3 = Color3.new(1, 1, 1)
 nextButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
 nextButton.Font = Enum.Font.SourceSans
 nextButton.TextSize = 20
-nextButton.MouseButton1Click:Connect(function()
-    changePage(1)
-end)
 
--- Minimize/Expand
-local function minimizeMenu()
-    isMinimized = true
-    menuFrame.Size = UDim2.new(0, 50, 0, 50)
-    menuFrame.Position = UDim2.new(1, -50, 0, 0)
-end
-
-local function expandMenu()
-    isMinimized = false
-    menuFrame.Size = UDim2.new(0, 300, 0, 400)
-    menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-end
-
-minimizeButton.MouseButton1Click:Connect(function()
-    if isMinimized then
-        expandMenu()
-        showButtons(currentPage)
-    else
-        minimizeMenu()
+-- Funções para navegação de páginas
+prevButton.MouseButton1Click:Connect(function()
+    if currentPage > 1 then
+        currentPage = currentPage - 1
+        updateButtonVisibility()
     end
 end)
 
--- Exibir os botões da primeira página
-showButtons(currentPage)
+nextButton.MouseButton1Click:Connect(function()
+    if currentPage * buttonsPerPage < #buttons then
+        currentPage = currentPage + 1
+        updateButtonVisibility()
+    end
+end)
+
+-- Inicializa a visibilidade dos botões
+updateButtonVisibility()
