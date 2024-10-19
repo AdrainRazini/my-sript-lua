@@ -11,22 +11,28 @@ handle.CanCollide = false
 handle.BrickColor = BrickColor.new("Bright yellow")
 handle.Parent = tool
 
--- Cria uma explosão quando um jogador se aproxima
+-- Função para criar uma explosão
+local function createExplosion(position)
+    local explosion = Instance.new("Explosion")
+    explosion.Position = position
+    explosion.BlastRadius = 10
+    explosion.BlastPressure = 5000
+    explosion.Parent = workspace
+    print("Explosão criada na posição: " .. tostring(position))
+end
+
+-- Função quando um jogador toca o Handle
 local function onPlayerTouch(other)
     local player = game.Players:GetPlayerFromCharacter(other.Parent)
-    if player and player ~= game.Players.LocalPlayer then
-        -- Cria uma explosão
-        local explosion = Instance.new("Explosion")
-        explosion.Position = other.Position -- Posição do jogador que tocou
-        explosion.BlastRadius = 10
-        explosion.BlastPressure = 5000
-        explosion.Parent = workspace
-        print("Explosão criada por proximidade!")
+    if player then
+        -- Cria uma explosão na posição do jogador que tocou
+        createExplosion(other.Position)
     end
 end
 
 -- Conecta o evento Touched ao Handle
 handle.Touched:Connect(onPlayerTouch)
 
+-- Adiciona a ferramenta ao jogador
 tool.Parent = game.Players.LocalPlayer.Backpack
 print("Ferramenta de Explosão criada!")
