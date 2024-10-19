@@ -1,0 +1,29 @@
+-- Ferramenta de Explosão
+local tool = Instance.new("Tool")
+tool.Name = "ExplosionTool"
+tool.RequiresHandle = true
+
+local handle = Instance.new("Part")
+handle.Name = "Handle"
+handle.Size = Vector3.new(1, 5, 1)
+handle.Anchored = false
+handle.CanCollide = false
+handle.BrickColor = BrickColor.new("Bright yellow")
+handle.Parent = tool
+
+tool.Equipped:Connect(function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local position = character.HumanoidRootPart.Position
+
+    -- Cria uma explosão
+    local explosion = Instance.new("Explosion")
+    explosion.Position = position
+    explosion.BlastRadius = 10
+    explosion.BlastPressure = 5000
+    explosion.Parent = workspace
+    print("Explosão criada!")
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+print("Ferramenta de Explosão criada!")
