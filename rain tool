@@ -14,8 +14,11 @@ handle.Parent = tool
 tool.Equipped:Connect(function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
-    local startPosition = character.HumanoidRootPart.Position
-    local direction = character.HumanoidRootPart.CFrame.LookVector
+
+    -- Espera até que a HumanoidRootPart esteja disponível
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local startPosition = humanoidRootPart.Position
+    local direction = humanoidRootPart.CFrame.LookVector
 
     -- Cria um raio
     local ray = Ray.new(startPosition, direction * 100)
