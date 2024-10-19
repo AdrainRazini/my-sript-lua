@@ -9,8 +9,6 @@ local primaryPart = character.PrimaryPart
 local flying = false
 local speed = 100
 local flightBoost = 150
-local maxFlightTime = 10 -- Tempo máximo de voo em segundos
-local flightStartTime = 0
 
 -- Criação de BodyVelocity e BodyGyro
 local function createFlightMechanics()
@@ -43,18 +41,12 @@ end
 local function toggleFlying()
     flying = not flying
     if flying then
-        flightStartTime = tick() -- Registra o início do voo
         while flying do
             applyMovement()
-            if tick() - flightStartTime >= maxFlightTime then
-                stopFlying() -- Para o voo se o tempo máximo for alcançado
-                break
-            end
             wait(0.1)
         end
     else
-        bodyVelocity.Velocity = Vector3.new()
-        bodyGyro.CFrame = primaryPart.CFrame
+        stopFlying()
     end
 end
 
