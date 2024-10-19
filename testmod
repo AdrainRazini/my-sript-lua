@@ -148,6 +148,40 @@ createButton("Reset", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
 
+
+createButton("Text 1", function()
+    loadstring(game:HttpGet("https://example.com/script1"))()
+end)
+
+createButton("Text 2", function()
+    loadstring(game:HttpGet("https://example.com/script2"))()
+end)
+
+createButton("Text 3", function()
+    loadstring(game:HttpGet("https://example.com/script3"))()
+end)
+
+createButton("Text 4", function()
+    loadstring(game:HttpGet("https://example.com/script4"))()
+end)
+
+createButton("Text 5", function()
+    loadstring(game:HttpGet("https://example.com/script5"))()
+end)
+
+createButton("Text 6", function()
+    loadstring(game:HttpGet("https://example.com/script6"))()
+end)
+
+createButton("Text 7", function()
+    loadstring(game:HttpGet("https://example.com/script7"))()
+end)
+
+createButton("Text 8", function()
+    loadstring(game:HttpGet("https://example.com/script8"))()
+end)
+
+
 -- Função para controlar páginas
 local function updateButtonVisibility()
     local totalButtons = #buttons
