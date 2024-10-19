@@ -1,8 +1,8 @@
 local player = game.Players.LocalPlayer
-local userInputService = game:GetService("UserInputService")
-
--- Criação da interface gráfica
+local UserInputService = game:GetService("UserInputService")
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+
+-- Frame principal do menu
 local menuFrame = Instance.new("Frame", screenGui)
 menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
@@ -28,10 +28,7 @@ minimizeButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
 minimizeButton.Font = Enum.Font.SourceSansBold
 minimizeButton.TextSize = 20
 
--- Variáveis para controle do menu
 local isMinimized = false
-local currentPage = 1
-local buttonsPerPage = 4
 local buttons = {}
 
 local function minimizeMenu()
@@ -62,7 +59,7 @@ minimizeButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Função para arrastar o menu
+-- Função para arrastar
 local dragging
 local dragStart
 local startPos
@@ -86,20 +83,17 @@ menuFrame.InputBegan:Connect(function(input)
     end
 end)
 
-userInputService.InputChanged:Connect(function(input)
+UserInputService.InputChanged:Connect(function(input)
     if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         updatePosition(input)
     end
 end)
 
--- Layout para os botões
-local uiListLayout = Instance.new("UIListLayout", menuFrame)
-uiListLayout.Padding = UDim.new(0, 10) -- Espaçamento entre os botões
-
 -- Função para criar botões no menu
-local function createButton(name, activateCallback)
+local function createButton(name, position, activateCallback, deactivateCallback)
     local button = Instance.new("TextButton", menuFrame)
     button.Size = UDim2.new(1, -20, 0, 50)
+    button.Position = position
     button.Text = name
     button.TextColor3 = Color3.new(1, 1, 1)
     button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
@@ -107,91 +101,52 @@ local function createButton(name, activateCallback)
     button.Font = Enum.Font.SourceSans
     button.TextSize = 20
 
+    local isActive = false
+
     button.MouseButton1Click:Connect(function()
-        activateCallback() -- Chama a lógica para ativar a função
+        isActive = not isActive
+        if isActive then
+            button.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde quando ativado
+            activateCallback() -- Chama a lógica para ativar a função
+        else
+            button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Cor original quando desativado
+            if deactivateCallback then
+                deactivateCallback() -- Chama a lógica para desativar a função
+            end
+        end
     end)
 
     -- Adiciona o botão à tabela para controle de visibilidade
     table.insert(buttons, button)
 end
 
--- Funções de ativação para os botões
-createButton("Fly tool", function()
+-- Exemplo de botões
+createButton("Fly Tool", UDim2.new(0, 10, 0, 60), function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
+end, function()
+    -- Lógica para desativar a função de voar
 end)
 
-createButton("Speed Boost tool", function()
-    -- Lógica para aumentar a velocidade
+createButton("Speed Boost Tool", UDim2.new(0, 10, 0, 120), function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speed-tool"))()
+end, function()
+    -- Lógica para desativar a velocidade
 end)
 
-createButton("Teleport tool", function()
+createButton("Teleport Tool", UDim2.new(0, 10, 0, 180), function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/teleport-tool"))()
+end, function()
+    -- Lógica para desativar o teleport
 end)
 
-createButton("Rain tool", function()
+createButton("Rain Tool", UDim2.new(0, 10, 0, 240), function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/rain%20tool"))()
+end, function()
+    -- Lógica para desativar a chuva
 end)
 
-createButton("Jump tool", function()
+createButton("Jump Tool", UDim2.new(0, 10, 0, 300), function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/jump%20tool"))()
+end, function()
+    -- Lógica para desativar o pulo alto
 end)
-
-createButton("Reset players", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/playerexpttool"))()
-end)
-
-createButton("Kit Hack", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/kit%20hack"))()
-end)
-
-createButton("Reset", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
-end)
-
--- Função para controlar páginas
-local function updateButtonVisibility()
-    local totalButtons = #buttons
-    local startIndex = (currentPage - 1) * buttonsPerPage + 1
-    local endIndex = math.min(startIndex + buttonsPerPage - 1, totalButtons)
-
-    for i, button in ipairs(buttons) do
-        button.Visible = (i >= startIndex and i <= endIndex)
-    end
-end
-
--- Botões de navegação
-local prevButton = Instance.new("TextButton", menuFrame)
-prevButton.Size = UDim2.new(0.5, -10, 0, 50)
-prevButton.Position = UDim2.new(0, 0, 1, -60)
-prevButton.Text = "Anterior"
-prevButton.TextColor3 = Color3.new(1, 1, 1)
-prevButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-prevButton.Font = Enum.Font.SourceSans
-prevButton.TextSize = 20
-
-local nextButton = Instance.new("TextButton", menuFrame)
-nextButton.Size = UDim2.new(0.5, -10, 0, 50)
-nextButton.Position = UDim2.new(0.5, 10, 1, -60)
-nextButton.Text = "Próximo"
-nextButton.TextColor3 = Color3.new(1, 1, 1)
-nextButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-nextButton.Font = Enum.Font.SourceSans
-nextButton.TextSize = 20
-
--- Funções para navegação de páginas
-prevButton.MouseButton1Click:Connect(function()
-    if currentPage > 1 then
-        currentPage = currentPage - 1
-        updateButtonVisibility()
-    end
-end)
-
-nextButton.MouseButton1Click:Connect(function()
-    if currentPage * buttonsPerPage < #buttons then
-        currentPage = currentPage + 1
-        updateButtonVisibility()
-    end
-end)
-
--- Inicializa a visibilidade dos botões
-updateButtonVisibility()
