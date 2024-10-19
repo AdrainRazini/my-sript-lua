@@ -4,7 +4,7 @@ local userInputService = game:GetService("UserInputService")
 -- Criação da interface gráfica
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 local menuFrame = Instance.new("Frame", screenGui)
-menuFrame.Size = UDim2.new(0, 300, 0, 1400)
+menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
@@ -153,12 +153,6 @@ createButton("Reset", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
 
--- Novos botões com "Text" e loadstring
-for i = 1, 8 do
-    createButton("Text " .. i, function()
-        loadstring(game:HttpGet("https://example.com/script" .. i))()
-    end)
-end
 
 -- Função para controlar páginas
 local function updateButtonVisibility()
