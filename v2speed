@@ -4,7 +4,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 
 -- Cria uma nova ferramenta
 local tool = Instance.new("Tool")
-tool.Name = "velocidade"
+tool.Name = "Velocidade"
 tool.RequiresHandle = true
 
 -- Cria o objeto Handle da ferramenta
@@ -34,22 +34,26 @@ animation.Parent = animator
 -- Cria a GUI de controle de velocidade
 local speedGui = Instance.new("ScreenGui", player.PlayerGui)
 local frame = Instance.new("Frame", speedGui)
-frame.Size = UDim2.new(0, 200, 0, 100)
+frame.Size = UDim2.new(0, 200, 0, 120)
 frame.Position = UDim2.new(1, -210, 0, 10)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BackgroundTransparency = 0.5
+frame.Visible = false  -- Esconde a GUI inicialmente
 
-local slider = Instance.new("TextButton", frame)
-slider.Size = UDim2.new(1, 0, 0, 50)
-slider.Text = "Ajustar Velocidade"
-slider.BackgroundColor3 = Color3.new(1, 1, 1)
+local speedSlider = Instance.new("Slider", frame)  -- Slider para ajuste de velocidade
+speedSlider.Size = UDim2.new(1, -40, 0, 40)
+speedSlider.Position = UDim2.new(0, 20, 0, 10)
+speedSlider.MinValue = 16  -- Velocidade mínima
+speedSlider.MaxValue = 100  -- Velocidade máxima
+speedSlider.Value = 16  -- Velocidade inicial
+speedSlider.BackgroundColor3 = Color3.new(1, 1, 1)
 
 local speedLabel = Instance.new("TextLabel", frame)
-speedLabel.Size = UDim2.new(1, 0, 0, 50)
-speedLabel.Position = UDim2.new(0, 0, 0, 50)
+speedLabel.Size = UDim2.new(1, 0, 0, 30)
+speedLabel.Position = UDim2.new(0, 0, 0, 60)
 speedLabel.BackgroundColor3 = Color3.new(0, 0, 0)
 speedLabel.TextColor3 = Color3.new(1, 1, 1)
-speedLabel.Text = "Velocidade: 16"
+speedLabel.Text = "Velocidade: " .. speedSlider.Value
 
 local minimizeButton = Instance.new("TextButton", frame)
 minimizeButton.Size = UDim2.new(0, 30, 0, 30)
@@ -57,14 +61,16 @@ minimizeButton.Position = UDim2.new(1, -30, 0, 0)
 minimizeButton.Text = "-"
 minimizeButton.BackgroundColor3 = Color3.new(1, 0, 0)
 
-local function adjustSpeed()
-    local newSpeed = math.floor((slider.AbsolutePosition.Y / 10)) + 16 -- Ajuste a fórmula conforme necessário
-    character.Humanoid.WalkSpeed = newSpeed
-    speedLabel.Text = "Velocidade: " .. newSpeed
+-- Atualiza a velocidade do jogador
+local function updateSpeed()
+    character.Humanoid.WalkSpeed = speedSlider.Value
+    speedLabel.Text = "Velocidade: " .. speedSlider.Value
 end
 
-slider.MouseButton1Click:Connect(adjustSpeed)
+-- Conecta o evento de mudança do slider
+speedSlider.Changed:Connect(updateSpeed)
 
+-- Minimiza a GUI
 minimizeButton.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
 end)
@@ -73,7 +79,7 @@ local animTrack
 
 tool.Equipped:Connect(function()
     -- Aumenta a velocidade
-    character.Humanoid.WalkSpeed = 25  -- 16 é a velocidade padrão, então 16 * 5 = 80
+    character.Humanoid.WalkSpeed = speedSlider.Value  -- Define a velocidade inicial
     animTrack = animator:LoadAnimation(animation)
     animTrack:Play()
     speedGui.Enabled = true  -- Mostra a GUI
