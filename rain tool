@@ -1,0 +1,33 @@
+-- Ferramenta de Raio
+local tool = Instance.new("Tool")
+tool.Name = "LaserTool"
+tool.RequiresHandle = true
+
+local handle = Instance.new("Part")
+handle.Name = "Handle"
+handle.Size = Vector3.new(1, 5, 1)
+handle.Anchored = false
+handle.CanCollide = false
+handle.BrickColor = BrickColor.new("Bright orange")
+handle.Parent = tool
+
+tool.Equipped:Connect(function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local startPosition = character.HumanoidRootPart.Position
+    local direction = character.HumanoidRootPart.CFrame.LookVector
+
+    -- Cria um raio
+    local ray = Ray.new(startPosition, direction * 100)
+    local hit, position = workspace:FindPartOnRay(ray, character)
+
+    if hit then
+        print("Raio atingiu: " .. hit.Name)
+        -- Adicione efeitos de dano ou explosão aqui se necessário
+    else
+        print("Raio não atingiu nada.")
+    end
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+print("Ferramenta de Raio criada!")
