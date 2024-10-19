@@ -153,7 +153,6 @@ createButton("Reset", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
 
-
 -- Função para controlar páginas
 local function updateButtonVisibility()
     local totalButtons = #buttons
@@ -163,6 +162,10 @@ local function updateButtonVisibility()
     for i, button in ipairs(buttons) do
         button.Visible = (i >= startIndex and i <= endIndex)
     end
+
+    -- Atualiza a visibilidade dos botões de navegação
+    prevButton.Visible = currentPage > 1
+    nextButton.Visible = currentPage < math.ceil(totalButtons / buttonsPerPage)
 end
 
 -- Botões de navegação
@@ -192,11 +195,17 @@ prevButton.MouseButton1Click:Connect(function()
 end)
 
 nextButton.MouseButton1Click:Connect(function()
-    local totalButtons = #buttons
-    if currentPage < math.ceil(totalButtons / buttonsPerPage) then
+    if currentPage < math.ceil(#buttons / buttonsPerPage) then
         currentPage = currentPage + 1
         updateButtonVisibility()
     end
 end)
 
-updateButtonVisibility() -- Atualiza a visibilidade dos botões ao iniciar
+updateButtonVisibility() -- Chama a função na inicialização
+
+-- Manipulação de eventos para atualizar a visibilidade ao adicionar ou remover botões
+for _, button in pairs(buttons) do
+    button.Changed:Connect(function()
+        updateButtonVisibility()
+    end)
+end
