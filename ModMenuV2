@@ -150,6 +150,12 @@ end, function()
     -- Lógica para desativar o pulo alto
 end)
 
+createButton("Reset players", UDim2.new(0, 10, 0, 360), function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/playerexpttool"))()
+end, function()
+    -- Lógica para desativar o reset
+end)
+
 createButton("Reset", UDim2.new(0, 10, 0, 360), function()
   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end, function()
