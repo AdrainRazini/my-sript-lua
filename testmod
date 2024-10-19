@@ -53,6 +53,7 @@ local function expandMenu()
     for _, button in pairs(buttons) do
         button.Visible = true
     end
+    updateButtonVisibility() -- Atualiza a visibilidade dos botões ao expandir
 end
 
 minimizeButton.MouseButton1Click:Connect(function()
