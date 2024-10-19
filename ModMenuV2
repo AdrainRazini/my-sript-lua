@@ -151,7 +151,7 @@ end, function()
 end)
 
 createButton("Reset", UDim2.new(0, 10, 0, 360), function()
-  loadstring(game:HttpGet(""))()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end, function()
     -- Lógica para desativar o reset
 end)
