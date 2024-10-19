@@ -156,6 +156,13 @@ end, function()
     -- Lógica para desativar o reset
 end)
 
+createButton("kit hack", UDim2.new(0, 10, 0, 360), function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/kit%20hack"))()
+end, function()
+    -- Lógica para desativar o reset
+end)
+
+
 createButton("Reset", UDim2.new(0, 10, 0, 360), function()
   loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end, function()
