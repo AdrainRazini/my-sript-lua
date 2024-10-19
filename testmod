@@ -126,7 +126,7 @@ createButton("Fly tool", function()
 end)
 
 createButton("Speed Boost tool", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speedboost"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speed-tool"))()
 end)
 
 createButton("Teleport tool", function()
