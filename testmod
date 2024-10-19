@@ -8,6 +8,7 @@ menuFrame.Size = UDim2.new(0, 300, 0, 400)
 menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 menuFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 menuFrame.BorderSizePixel = 0
+menuFrame.Visible = true
 
 -- Título do menu
 local titleLabel = Instance.new("TextLabel", menuFrame)
@@ -34,21 +35,21 @@ local currentPage = 1
 local buttonsPerPage = 4
 local buttons = {}
 
+-- Função para minimizar o menu
 local function minimizeMenu()
     isMinimized = true
     menuFrame.Size = UDim2.new(0, 50, 0, 50)
     menuFrame.Position = UDim2.new(1, -50, 0, 0)
-
     for _, button in pairs(buttons) do
         button.Visible = false
     end
 end
 
+-- Função para expandir o menu
 local function expandMenu()
     isMinimized = false
     menuFrame.Size = UDim2.new(0, 300, 0, 400)
     menuFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-
     for _, button in pairs(buttons) do
         button.Visible = true
     end
@@ -109,6 +110,9 @@ local function createButton(name, activateCallback)
 
     button.MouseButton1Click:Connect(function()
         activateCallback() -- Chama a lógica para ativar a função
+        button.BackgroundColor3 = Color3.new(0.5, 1, 0.5) -- Muda a cor do botão quando clicado
+        wait(0.5)
+        button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) -- Retorna à cor original
     end)
 
     -- Adiciona o botão à tabela para controle de visibilidade
@@ -121,7 +125,7 @@ createButton("Fly tool", function()
 end)
 
 createButton("Speed Boost tool", function()
-    -- Lógica para aumentar a velocidade
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/speedboost"))()
 end)
 
 createButton("Teleport tool", function()
@@ -149,37 +153,11 @@ createButton("Reset", function()
 end)
 
 -- Novos botões com "Text" e loadstring
-createButton("Text 1", function()
-    loadstring(game:HttpGet("https://example.com/script1"))()
-end)
-
-createButton("Text 2", function()
-    loadstring(game:HttpGet("https://example.com/script2"))()
-end)
-
-createButton("Text 3", function()
-    loadstring(game:HttpGet("https://example.com/script3"))()
-end)
-
-createButton("Text 4", function()
-    loadstring(game:HttpGet("https://example.com/script4"))()
-end)
-
-createButton("Text 5", function()
-    loadstring(game:HttpGet("https://example.com/script5"))()
-end)
-
-createButton("Text 6", function()
-    loadstring(game:HttpGet("https://example.com/script6"))()
-end)
-
-createButton("Text 7", function()
-    loadstring(game:HttpGet("https://example.com/script7"))()
-end)
-
-createButton("Text 8", function()
-    loadstring(game:HttpGet("https://example.com/script8"))()
-end)
+for i = 1, 8 do
+    createButton("Text " .. i, function()
+        loadstring(game:HttpGet("https://example.com/script" .. i))()
+    end)
+end
 
 -- Função para controlar páginas
 local function updateButtonVisibility()
