@@ -103,7 +103,10 @@ local function createButton(name, activateCallback, tooltipText)
 end
 
 
+    https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Inventory%20para%20jogos%20que%20nao%20tem
+createButton("inventario", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Inventory%20para%20jogos%20que%20nao%20tem"))()
+end)
 
 
 createButton("Fly tool", function()
