@@ -129,6 +129,12 @@ createButton("Jump tool", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/jump%20tool"))()
 end)
 
+
+
+createButton("ESP", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/ESP.lua"))()
+end)
+
 createButton("Reset players", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/playerexpttool"))()
 end)
@@ -140,12 +146,6 @@ end)
 createButton("Reset", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/resttool"))()
 end)
-
-createButton("ESP", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/ESP.lua"))()
-end)
-
-
 
 -- Botão para minimizar o menu
 local minimizeButton = Instance.new("TextButton", screenGui)
