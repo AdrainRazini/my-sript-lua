@@ -102,6 +102,10 @@ local function createButton(name, activateCallback, tooltipText)
     scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 end
 
+
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Inventory%20para%20jogos%20que%20nao%20tem"))()
+
+
 createButton("Fly tool", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/my-sript-lua/refs/heads/main/Flytool"))()
 end)
